@@ -173,6 +173,7 @@
         .ai-stream-bar {
             text-align: center; padding: 8px 20px; flex-shrink: 0;
             max-width: 420px; margin: 0 auto;
+            transform: translateY(-30px);
         }
         #ai-stream-text {
             color: rgba(92,224,216,0.85); font-size: 15px; font-weight: 400;
@@ -2924,6 +2925,246 @@
         }
         .find-ear-label { font-size: 12px; color: #888; }
         .find-ear-status { font-size: 11px; color: #5ce0d8; }
+        /* ===== Voice Demo: home entry + sheet + agent + result ===== */
+        .voice-demo-entry {
+            position: absolute; right: 18px; bottom: 86px; z-index: 50; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            padding: 11px 18px; border-radius: 999px;
+            background: linear-gradient(135deg, rgba(92,224,216,0.96), rgba(46,160,152,0.96));
+            color: #04161a; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+            box-shadow: 0 6px 22px rgba(92,224,216,0.35), 0 0 0 1px rgba(92,224,216,0.25);
+            border: 1px solid rgba(255,255,255,0.28); user-select: none;
+        }
+        .voice-demo-entry:active { transform: scale(0.96); }
+        .voice-demo-entry .ring {
+            position: absolute; left: 8px; top: 50%; width: 28px; height: 28px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.5); transform: translateY(-50%);
+            animation: voicePulse 1.9s ease-out infinite; pointer-events: none;
+        }
+        @keyframes voicePulse { 0%{transform:translateY(-50%) scale(0.6);opacity:0.7} 100%{transform:translateY(-50%) scale(1.9);opacity:0} }
+
+        .voice-overlay { position: fixed; inset: 0; z-index: 900; display: none; align-items: center; justify-content: center; }
+        .voice-overlay.show { display: flex; animation: voiceFade 0.25s ease; }
+        @keyframes voiceFade { from{opacity:0} to{opacity:1} }
+        .voice-overlay .backdrop {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.84);
+            backdrop-filter: blur(9px) saturate(120%); -webkit-backdrop-filter: blur(9px) saturate(120%);
+        }
+
+        #voice-command-sheet { align-items: flex-end; padding-bottom: 18px; }
+        #voice-command-sheet .sheet-card {
+            position: relative; z-index: 2; width: min(92%, 440px); max-height: 72vh; overflow-y: auto;
+            padding: 18px 16px 14px; border-radius: 22px;
+            background: rgba(18,22,26,0.82);
+            backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%);
+            border: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 0 0 1px rgba(92,224,216,0.10), 0 14px 50px rgba(0,0,0,0.65), 0 0 70px rgba(92,224,216,0.10);
+            animation: voiceRise 0.3s cubic-bezier(.2,.8,.2,1);
+        }
+        @keyframes voiceRise { from{transform:translateY(26px);opacity:0} to{transform:translateY(0);opacity:1} }
+        .voice-sheet-title { color: #cfd6da; font-size: 14px; font-weight: 600; margin: 0 6px 4px; letter-spacing: 0.4px; }
+        .voice-sheet-hint { color: #6b7479; font-size: 11px; margin: 0 6px 12px; }
+        .voice-item {
+            display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 14px; cursor: pointer;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 8px; transition: background .15s, border-color .15s, transform .1s;
+        }
+        .voice-item:hover { background: rgba(92,224,216,0.08); border-color: rgba(92,224,216,0.25); }
+        .voice-item:active { transform: scale(0.99); }
+        .voice-item .vi-ico { flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(92,224,216,0.14); border: 1px solid rgba(92,224,216,0.25); }
+        .voice-item .vi-txt { color: #e6ebed; font-size: 14px; line-height: 1.4; }
+        .voice-item .vi-sub { color: #6f787c; font-size: 11px; margin-top: 2px; }
+        .voice-sheet-close { margin-top: 6px; text-align: center; color: #8a9296; font-size: 13px; padding: 11px; border-radius: 12px; cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+
+        #voice-agent-overlay .agent-wrap { position: relative; z-index: 2; text-align: center; width: min(88%, 380px); }
+        .agent-orb {
+            width: 120px; height: 120px; margin: 0 auto 26px; border-radius: 50%;
+            background: radial-gradient(circle at 50% 40%, rgba(92,224,216,0.38), rgba(92,224,216,0.05) 70%);
+            border: 1px solid rgba(92,224,216,0.35);
+            box-shadow: 0 0 50px rgba(92,224,216,0.25), inset 0 0 30px rgba(92,224,216,0.15);
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .agent-orb::before, .agent-orb::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 1px solid rgba(92,224,216,0.25); animation: agentRing 2s ease-out infinite; }
+        .agent-orb::after { animation-delay: 1s; }
+        @keyframes agentRing { 0%{transform:scale(0.9);opacity:0.8} 100%{transform:scale(1.5);opacity:0} }
+        .agent-waves { display: flex; align-items: center; justify-content: center; gap: 4px; height: 30px; }
+        .agent-waves span { display: block; width: 3px; border-radius: 3px; background: #5ce0d8; animation: agentBar 1s ease-in-out infinite; }
+        .agent-waves span:nth-child(1){height:10px;animation-delay:0s}
+        .agent-waves span:nth-child(2){height:22px;animation-delay:.15s}
+        .agent-waves span:nth-child(3){height:30px;animation-delay:.3s}
+        .agent-waves span:nth-child(4){height:18px;animation-delay:.45s}
+        .agent-waves span:nth-child(5){height:24px;animation-delay:.6s}
+        @keyframes agentBar { 0%,100%{transform:scaleY(0.4);opacity:.5} 50%{transform:scaleY(1);opacity:1} }
+        .agent-text { color: #e6ebed; font-size: 16px; font-weight: 500; margin-top: 8px; min-height: 24px; letter-spacing: 0.4px; }
+        .agent-agent { margin-top: 14px; color: #5ce0d8; font-size: 13px; letter-spacing: 0.5px; min-height: 20px; }
+        .agent-agent .badge { display: inline-block; padding: 4px 11px; border-radius: 999px; background: rgba(92,224,216,0.14); border: 1px solid rgba(92,224,216,0.3); }
+
+        #voice-result-overlay .result-card {
+            position: relative; z-index: 2; width: min(86%, 380px); padding: 22px 20px; border-radius: 22px;
+            background: rgba(16,20,24,0.74);
+            backdrop-filter: blur(26px) saturate(150%); -webkit-backdrop-filter: blur(26px) saturate(150%);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(92,224,216,0.08), 0 12px 44px rgba(0,0,0,0.6), 0 0 70px rgba(92,224,216,0.10);
+            animation: voicePop 0.32s cubic-bezier(.2,.9,.3,1.2);
+        }
+        @keyframes voicePop { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
+        .rc-close { position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #9aa3a7; cursor: pointer; font-size: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); }
+        .rc-source { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #5ce0d8; background: rgba(92,224,216,0.12); border: 1px solid rgba(92,224,216,0.25); padding: 3px 9px; border-radius: 999px; margin-bottom: 14px; }
+        .rc-weather-city { color: #cfd6da; font-size: 14px; }
+        .rc-weather-temp { color: #fff; font-size: 54px; font-weight: 200; line-height: 1.1; margin: 6px 0 2px; }
+        .rc-weather-range { color: #aab2b6; font-size: 13px; }
+        .rc-aqi { display: inline-block; margin-top: 10px; font-size: 12px; color: #8f989c; }
+        .rc-aqi b { color: #7be38a; }
+        .rc-weather-hint { margin-top: 14px; padding: 10px 12px; border-radius: 12px; font-size: 13px; color: #dfe5e8; background: rgba(92,224,216,0.08); border: 1px solid rgba(92,224,216,0.18); }
+        .rc-news-thumb { height: 110px; border-radius: 14px; margin-bottom: 12px; position: relative; overflow: hidden; background: radial-gradient(circle at 20% 30%, rgba(92,224,216,0.35), transparent 45%), radial-gradient(circle at 80% 70%, rgba(123,90,232,0.32), transparent 50%), linear-gradient(135deg, #0c1a22, #0a0f14); border: 1px solid rgba(92,224,216,0.18); }
+        .rc-news-thumb::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 22px 22px; }
+        .rc-news-thumb .nt-tag { position: absolute; left: 10px; top: 10px; z-index: 2; font-size: 11px; color: #5ce0d8; background: rgba(0,0,0,0.35); padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(92,224,216,0.3); }
+        .rc-news-title { color: #fff; font-size: 16px; font-weight: 600; line-height: 1.4; }
+        .rc-news-summary { color: #aab2b6; font-size: 13px; line-height: 1.55; margin-top: 8px; }
+        .rc-time-big { color: #fff; font-size: 60px; font-weight: 200; line-height: 1; letter-spacing: 1px; }
+        .rc-time-date { color: #9aa3a7; font-size: 14px; margin-top: 8px; }
+        .rc-train-route { display: flex; align-items: center; gap: 10px; color: #e6ebed; font-size: 16px; font-weight: 600; }
+        .rc-train-route .arrow { color: #5ce0d8; }
+        .rc-train-dur { color: #fff; font-size: 30px; font-weight: 300; margin: 12px 0 4px; }
+        .rc-train-sub { color: #aab2b6; font-size: 13px; }
+        .rc-train-tip { margin-top: 14px; font-size: 13px; color: #dfe5e8; line-height: 1.5; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 10px 12px; border-radius: 12px; }
+
+        /* ===== Voiceprint setup modal ===== */
+        #voiceprint-setup-overlay { z-index: 910; }
+        #voiceprint-setup-overlay .vp-backdrop {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.82);
+            backdrop-filter: blur(9px) saturate(120%); -webkit-backdrop-filter: blur(9px) saturate(120%);
+        }
+        #voiceprint-setup-overlay .vp-modal {
+            position: relative; z-index: 2; width: min(90%, 430px); padding: 26px 24px 22px; border-radius: 24px; text-align: center;
+            background: rgba(18,22,26,0.78);
+            backdrop-filter: blur(28px) saturate(150%); -webkit-backdrop-filter: blur(28px) saturate(150%);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(92,224,216,0.08), 0 14px 50px rgba(0,0,0,0.65), 0 0 70px rgba(92,224,216,0.12);
+            animation: voicePop 0.32s cubic-bezier(.2,.9,.3,1.2);
+        }
+        .vp-ico { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; background: radial-gradient(circle at 50% 40%, rgba(92,224,216,0.30), rgba(92,224,216,0.05) 72%); border: 1px solid rgba(92,224,216,0.32); box-shadow: 0 0 40px rgba(92,224,216,0.22); }
+        .vp-title { color: #fff; font-size: 19px; font-weight: 600; letter-spacing: 0.5px; }
+        .vp-desc { color: #aab2b6; font-size: 13.5px; line-height: 1.6; margin: 12px auto 0; max-width: 340px; }
+        .vp-hint { color: #5ce0d8; font-size: 12px; margin-top: 14px; }
+        .vp-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+        .vp-primary { border: none; cursor: pointer; padding: 13px; border-radius: 14px; font-size: 15px; font-weight: 600; color: #04161a; background: linear-gradient(135deg, rgba(92,224,216,0.96), rgba(46,160,152,0.96)); box-shadow: 0 6px 22px rgba(92,224,216,0.32); }
+        .vp-primary:active { transform: scale(0.98); }
+        .vp-secondary { border: none; cursor: pointer; padding: 12px; border-radius: 14px; font-size: 14px; color: #9aa3a7; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+        .vp-secondary:active { transform: scale(0.98); }
+
+        /* ===== Voiceprint enroll screen ===== */
+        #voiceprint-enroll-screen { padding: 0; }
+        #voiceprint-enroll-screen .ve-back { position: absolute; top: 14px; left: 16px; z-index: 20; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #9aa3a7; font-size: 14px; padding: 6px 12px 6px 8px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
+        .voiceprint-enroll-layout { flex: 1; display: flex; align-items: center; justify-content: center; gap: 40px; padding: 60px 40px 40px; width: 100%; max-width: 980px; margin: 0 auto; }
+        .voiceprint-enroll-visual { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .voiceprint-eyes { display: flex; gap: 46px; }
+        .voiceprint-eye { width: 96px; height: 96px; border-radius: 50%; background: radial-gradient(circle at 38% 38%, #5ce0d8 0%, #0288d1 42%, #01579b 72%, #0d2137 100%); box-shadow: 0 0 40px rgba(92,224,216,0.35), 0 0 80px rgba(92,224,216,0.15), inset 0 0 20px rgba(255,255,255,0.1); position: relative; animation: breathe 4s ease-in-out infinite; }
+        .voiceprint-eye::after { content: ''; position: absolute; width: 14px; height: 14px; background: #fff; border-radius: 50%; top: 25%; left: 32%; box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+        .voiceprint-eye::before { content: ''; position: absolute; width: 6px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 50%; bottom: 30%; right: 30%; }
+        .voiceprint-enroll-card { width: min(94%, 440px); padding: 28px 26px 24px; border-radius: 24px; background: rgba(18,22,26,0.78); backdrop-filter: blur(28px) saturate(150%); -webkit-backdrop-filter: blur(28px) saturate(150%); border: 1px solid rgba(255,255,255,0.12); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(92,224,216,0.08), 0 14px 50px rgba(0,0,0,0.6), 0 0 70px rgba(92,224,216,0.10); }
+        .voiceprint-step-count { text-align: center; color: #5ce0d8; font-size: 13px; letter-spacing: 0.5px; }
+        .voiceprint-title { text-align: center; color: #fff; font-size: 20px; font-weight: 600; margin-top: 8px; }
+        .voiceprint-prompt-label { text-align: center; color: #6b7479; font-size: 12px; margin-top: 22px; }
+        .voiceprint-prompt-text { text-align: center; color: #e6ebed; font-size: 22px; font-weight: 500; line-height: 1.55; margin-top: 10px; min-height: 70px; display: flex; align-items: center; justify-content: center; }
+        .voiceprint-wave { display: flex; align-items: center; justify-content: center; gap: 6px; height: 56px; margin-top: 18px; }
+        .voiceprint-wave span { display: block; width: 5px; height: 18px; border-radius: 4px; background: rgba(92,224,216,0.28); transition: background .2s; }
+        #voiceprint-enroll-screen.recording .voiceprint-wave span { background: #5ce0d8; animation: vpBar 0.9s ease-in-out infinite; }
+        .voiceprint-wave span:nth-child(1){animation-delay:0s}
+        .voiceprint-wave span:nth-child(2){animation-delay:.12s}
+        .voiceprint-wave span:nth-child(3){animation-delay:.24s}
+        .voiceprint-wave span:nth-child(4){animation-delay:.36s}
+        .voiceprint-wave span:nth-child(5){animation-delay:.48s}
+        .voiceprint-wave span:nth-child(6){animation-delay:.60s}
+        .voiceprint-wave span:nth-child(7){animation-delay:.72s}
+        @keyframes vpBar { 0%,100%{transform:scaleY(0.3);opacity:.5} 50%{transform:scaleY(2.4);opacity:1} }
+        .voiceprint-status { text-align: center; color: #9aa3a7; font-size: 13px; margin-top: 14px; min-height: 20px; }
+        #voiceprint-enroll-screen.recording .voiceprint-status { color: #5ce0d8; }
+        #voiceprint-enroll-screen.done .voiceprint-status { color: #7be38a; }
+        .voiceprint-primary-btn { width: 100%; margin-top: 22px; border: none; cursor: pointer; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; color: #04161a; background: linear-gradient(135deg, rgba(92,224,216,0.96), rgba(46,160,152,0.96)); box-shadow: 0 6px 22px rgba(92,224,216,0.32); transition: transform .1s; }
+        .voiceprint-primary-btn:active { transform: scale(0.98); }
+        .voiceprint-primary-btn:disabled { cursor: not-allowed; opacity: 0.55; box-shadow: none; }
+        .voiceprint-done-all { text-align: center; color: #7be38a; font-size: 14px; margin-top: 12px; display: none; }
+        #voiceprint-enroll-screen.done .voiceprint-done-all { display: block; }
+        @media (max-width: 720px) {
+            .voiceprint-enroll-layout { flex-direction: column; gap: 28px; padding: 64px 18px 36px; }
+            .voiceprint-enroll-card { width: 92%; }
+            .voiceprint-eye { width: 72px; height: 72px; }
+            .voiceprint-eyes { gap: 34px; }
+            .voiceprint-prompt-text { font-size: 19px; }
+        }
+
+        /* ===== Home quick panel (right side drawer) ===== */
+        #home-quick-panel {
+            position: absolute; top: 0; right: 0; bottom: 0; z-index: 60;
+            width: 42%; max-width: 460px; min-width: 300px;
+            padding: 16px; display: flex; align-items: center;
+            transform: translateX(110%); transition: transform .32s cubic-bezier(.3,.85,.3,1);
+            pointer-events: none;
+        }
+        #home-quick-panel.open { transform: translateX(0); pointer-events: auto; }
+        .qp-card {
+            width: 100%; height: calc(100% - 24px); align-self: center;
+            border-radius: 26px; padding: 8px 16px 16px; overflow-y: auto;
+            background: linear-gradient(180deg, #ffffff 0%, #f3f5f7 100%);
+            box-shadow: -10px 0 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.04);
+            display: flex; flex-direction: column; gap: 14px; position: relative;
+        }
+        .qp-handle { width: 38px; height: 4px; border-radius: 4px; background: #d6dbe0; margin: 8px auto 2px; cursor: pointer; }
+        .qp-close { position: absolute; top: 14px; right: 16px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #8a9296; cursor: pointer; font-size: 16px; background: rgba(0,0,0,0.04); }
+        .qp-close:active { background: rgba(0,0,0,0.08); }
+        .qp-member { padding: 11px 14px 13px; border-radius: 14px; background: linear-gradient(135deg, #fbf6e8, #f5edd6); border: 1px solid #efe3bf; }
+        .qp-member-top { display: flex; align-items: center; gap: 8px; }
+        .qp-member-ico { font-size: 16px; }
+        .qp-member-name { color: #8a6d1f; font-size: 13px; font-weight: 600; }
+        .qp-member-up { color: #c79a2e; font-size: 12px; font-weight: 600; margin-left: auto; }
+        .qp-member-bottom { margin-top: 9px; }
+        .qp-member-label { color: #a88d4a; font-size: 11px; }
+        .qp-member-num { color: #8a6d1f; font-size: 12px; font-weight: 600; float: right; }
+        .qp-member-bar { height: 5px; border-radius: 3px; background: rgba(199,154,46,0.18); margin-top: 7px; overflow: hidden; }
+        .qp-member-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #e0b54a, #c79a2e); }
+        .qp-section-label { color: #8a9296; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; margin: 2px 2px 0; }
+        .qp-nav-row { display: flex; gap: 8px; justify-content: space-between; }
+        .qp-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px 12px; border-radius: 16px; cursor: pointer; background: #fff; border: 1px solid #eef0f2; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: transform .1s, box-shadow .15s; }
+        .qp-nav-btn:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+        .qp-nav-btn:active { transform: scale(0.97); }
+        .qp-nav-ico { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: linear-gradient(135deg, #e8fbf9, #d7f3ee); color: #0fa3a0; }
+        .qp-nav-ico svg { width: 24px; height: 24px; }
+        .qp-nav-txt { color: #1f272a; font-size: 13px; font-weight: 600; }
+        .qp-quick { background: #fff; border-radius: 16px; padding: 4px 14px; border: 1px solid #eef0f2; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .qp-row { display: flex; align-items: center; gap: 12px; padding: 13px 0; cursor: pointer; }
+        .qp-row + .qp-row { border-top: 1px solid #f0f2f4; }
+        .qp-row-ico { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; background: #f1f3f5; color: #1f272a; flex-shrink: 0; }
+        .qp-row-main { flex: 1; min-width: 0; }
+        .qp-row-name { color: #1f272a; font-size: 14px; font-weight: 600; }
+        .qp-row-desc { color: #9aa3a7; font-size: 11.5px; margin-top: 2px; }
+        .qp-row-right { color: #5ce0d8; font-size: 13px; flex-shrink: 0; }
+        .qp-row-arrow { color: #c4cacd; font-size: 18px; }
+        /* blue toggle */
+        .qp-toggle { position: relative; width: 44px; height: 26px; border-radius: 999px; background: #d6dbe0; flex-shrink: 0; transition: background .2s; cursor: pointer; }
+        .qp-toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: transform .2s; }
+        .qp-toggle.on { background: #2f7ff5; }
+        .qp-toggle.on::after { transform: translateX(18px); }
+        /* voice list */
+        .qp-voice-list { display: none; padding: 4px 0 8px; }
+        .qp-voice-list.open { display: block; }
+        .qp-voice-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; cursor: pointer; }
+        .qp-voice-item + .qp-voice-item { border-top: 1px solid #f0f2f4; }
+        .qp-voice-ava { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 600; }
+        .qp-voice-info { flex: 1; min-width: 0; }
+        .qp-voice-name { color: #1f272a; font-size: 14px; font-weight: 600; }
+        .qp-voice-desc { color: #9aa3a7; font-size: 11.5px; margin-top: 2px; }
+        .qp-voice-check { color: #2f7ff5; font-size: 18px; visibility: hidden; flex-shrink: 0; }
+        .qp-voice-item.selected .qp-voice-check { visibility: visible; }
+        /* subtle handle hint on home right edge */
+        .qp-edge-hint { position: absolute; top: 50%; right: 0; transform: translateY(-50%); z-index: 55; width: 11px; height: 120px; border-radius: 6px 0 0 6px; background: linear-gradient(180deg, transparent, rgba(92,224,216,0.75), transparent); cursor: pointer; opacity: 1; transition: opacity .2s; }
+        .qp-edge-hint:hover { opacity: 1; }
+        @media (max-width: 720px) {
+            #home-quick-panel { width: 88%; min-width: 0; }
+            .qp-nav-btn { padding: 12px 4px 10px; }
+        }
     </style>
 </head>
 <body>
@@ -2948,8 +3189,8 @@
 <div id="home-screen" class="screen bg-gradient">
     <!-- Home top bar -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;flex-shrink:0;width:100%;z-index:10;">
-        <!-- Left: avatar + city/temp -->
-        <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="goToProfile()">
+        <!-- Left: avatar + city/temp (已隐藏入口) -->
+        <div style="display:none;align-items:center;gap:10px;cursor:pointer;" onclick="goToProfile()">
             <div style="width:32px;height:32px;border-radius:50%;background:rgba(92,224,216,0.15);border:1.5px solid rgba(92,224,216,0.4);display:flex;align-items:center;justify-content:center;">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#5ce0d8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
             </div>
@@ -2959,7 +3200,7 @@
             </div>
         </div>
         <!-- Right: earphone + dock -->
-        <div style="display:flex;align-items:center;gap:14px;">
+        <div style="display:none;align-items:center;gap:14px;">
             <div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;opacity:0.8;" onclick="goToVoxclipDetail()">
                 <svg viewBox="0 0 28 28" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
                     <path d="M7 20 C4 20 3 16 3 13 C3 9 6 5 11 4 C13 3 14 4 14 6" fill="none" stroke="#5ce0d8" stroke-width="1.8" stroke-linecap="round"/>
@@ -2992,22 +3233,128 @@
     </div>
     <div class="home-content">
         <div id="eye-lottie-container" style="width:80%;max-width:800px;aspect-ratio:1500/844;"></div>
+        <div class="voice-demo-entry" onclick="openVoiceCommandSheet()">
+            <span class="ring"></span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#04161a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
+            <span>语音演示</span>
+        </div>
     </div>
     <div class="ai-stream-bar">
         <span id="ai-stream-text"></span><span class="ai-stream-cursor">|</span>
     </div>
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="goToList()">
-            <span class="nav-icon">📋</span>
-            <span class="nav-label">AI录音</span>
-        </div>
-        <div class="nav-item" onclick="goToScreen('ai-translate-placeholder-screen')">
-            <span class="nav-icon">🌐</span>
-            <span class="nav-label">AI翻译</span>
-        </div>
-        <div class="nav-item" onclick="goToScreen('ai-chat-screen')">
-            <span class="nav-icon">💬</span>
-            <span class="nav-label">AI对话</span>
+    <!-- Home quick panel (right side drawer) -->
+    <div class="qp-edge-hint" onclick="openQuickPanel()" title="展开快捷面板"></div>
+    <div id="home-quick-panel">
+        <div class="qp-card" onclick="event.stopPropagation()">
+            <div class="qp-handle" onclick="closeQuickPanel()"></div>
+            <div class="qp-close" onclick="closeQuickPanel()">×</div>
+
+            <div class="qp-member">
+                <div class="qp-member-top">
+                    <span class="qp-member-ico">👑</span>
+                    <span class="qp-member-name">标准会员</span>
+                    <span class="qp-member-up" onclick="showToast('跳转至竖屏会员购买页面')">升级 ›</span>
+                </div>
+                <div class="qp-member-bottom">
+                    <span class="qp-member-label">本月已用转写时长</span>
+                    <span class="qp-member-num">200/300分钟</span>
+                    <div class="qp-member-bar"><div class="qp-member-fill" style="width:66.7%"></div></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="qp-section-label">功能导航</div>
+                <div class="qp-nav-row">
+                    <div class="qp-nav-btn" onclick="navFromPanel(goToList)">
+                        <div class="qp-nav-ico">🎙️</div>
+                        <div class="qp-nav-txt">AI录音</div>
+                    </div>
+                    <div class="qp-nav-btn" onclick="navFromPanel(function(){ goToScreen('ai-translate-placeholder-screen'); })">
+                        <div class="qp-nav-ico">🌐</div>
+                        <div class="qp-nav-txt">AI翻译</div>
+                    </div>
+                    <div class="qp-nav-btn" onclick="navFromPanel(function(){ goToScreen('ai-chat-screen'); })">
+                        <div class="qp-nav-ico">💬</div>
+                        <div class="qp-nav-txt">AI对话</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="qp-section-label">快捷操作</div>
+                <div class="qp-quick">
+                    <div class="qp-row" onclick="toggleVoiceList()">
+                        <div class="qp-row-ico">🗣️</div>
+                        <div class="qp-row-main">
+                            <div class="qp-row-name">声音选择</div>
+                            <div class="qp-row-desc">当前声音</div>
+                        </div>
+                        <div class="qp-row-right" id="qp-voice-current">温柔桃子</div>
+                        <div class="qp-row-arrow">▾</div>
+                    </div>
+                    <div class="qp-voice-list" id="qp-voice-list">
+                        <div class="qp-voice-item selected" data-name="温柔桃子" onclick="selectVoice(this)">
+                            <div class="qp-voice-ava" style="background:linear-gradient(135deg,#ff9a8b,#ff6a88);">桃</div>
+                            <div class="qp-voice-info"><div class="qp-voice-name">温柔桃子</div><div class="qp-voice-desc">女｜青年｜温柔</div></div>
+                            <div class="qp-voice-check">✓</div>
+                        </div>
+                        <div class="qp-voice-item" data-name="磁性俊宇（升级版）" onclick="selectVoice(this)">
+                            <div class="qp-voice-ava" style="background:linear-gradient(135deg,#4facfe,#00f2fe);">俊</div>
+                            <div class="qp-voice-info"><div class="qp-voice-name">磁性俊宇（升级版）</div><div class="qp-voice-desc">男｜青年｜帅气</div></div>
+                            <div class="qp-voice-check">✓</div>
+                        </div>
+                        <div class="qp-voice-item" data-name="阳光甜妹（升级版）" onclick="selectVoice(this)">
+                            <div class="qp-voice-ava" style="background:linear-gradient(135deg,#ffd86f,#fc6262);">甜</div>
+                            <div class="qp-voice-info"><div class="qp-voice-name">阳光甜妹（升级版）</div><div class="qp-voice-desc">女｜青年｜台湾口音｜温柔</div></div>
+                            <div class="qp-voice-check">✓</div>
+                        </div>
+                        <div class="qp-voice-item" data-name="温柔桃子（经典版）" onclick="selectVoice(this)">
+                            <div class="qp-voice-ava" style="background:linear-gradient(135deg,#f6a6e1,#d76d77);">经</div>
+                            <div class="qp-voice-info"><div class="qp-voice-name">温柔桃子（经典版）</div><div class="qp-voice-desc">女｜青年｜温柔</div></div>
+                            <div class="qp-voice-check">✓</div>
+                        </div>
+                        <div class="qp-voice-item" data-name="邻家女孩" onclick="selectVoice(this)">
+                            <div class="qp-voice-ava" style="background:linear-gradient(135deg,#a8edea,#5ce0d8);">邻</div>
+                            <div class="qp-voice-info"><div class="qp-voice-name">邻家女孩</div><div class="qp-voice-desc">女｜青年｜耐心</div></div>
+                            <div class="qp-voice-check">✓</div>
+                        </div>
+                    </div>
+
+                    <div class="qp-row" onclick="event.stopPropagation()">
+                        <div class="qp-row-ico">🧠</div>
+                        <div class="qp-row-main">
+                            <div class="qp-row-name">记忆</div>
+                            <div class="qp-row-desc">记住偏好与常用指令</div>
+                        </div>
+                        <div class="qp-toggle on" id="qp-toggle-memory" onclick="toggleQpSwitch('qp-toggle-memory')"></div>
+                    </div>
+                    <div class="qp-row" onclick="event.stopPropagation()">
+                        <div class="qp-row-ico">🙂</div>
+                        <div class="qp-row-main">
+                            <div class="qp-row-name">人脸跟随</div>
+                            <div class="qp-row-desc">屏幕自动跟随用户视角</div>
+                        </div>
+                        <div class="qp-toggle on" id="qp-toggle-face" onclick="toggleQpSwitch('qp-toggle-face')"></div>
+                    </div>
+                    <div class="qp-row" onclick="event.stopPropagation()">
+                        <div class="qp-row-ico">✋</div>
+                        <div class="qp-row-main">
+                            <div class="qp-row-name">手势识别</div>
+                            <div class="qp-row-desc">通过手势完成拍照、翻页等操作</div>
+                        </div>
+                        <div class="qp-toggle" id="qp-toggle-gesture" onclick="toggleQpSwitch('qp-toggle-gesture')"></div>
+                    </div>
+                    <div class="qp-row" onclick="navFromPanel(openVoiceprintSetup)">
+                        <div class="qp-row-ico">🎙️</div>
+                        <div class="qp-row-main">
+                            <div class="qp-row-name">声纹设置</div>
+                            <div class="qp-row-desc">录入或管理你的专属声纹</div>
+                        </div>
+                        <div class="qp-row-right">去设置</div>
+                        <div class="qp-row-arrow">›</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -6317,6 +6664,106 @@
     animation: fadeInLine 0.3s ease;
 "></div>
 
+<!-- Voice Demo: command sheet -->
+<div id="voice-command-sheet" class="voice-overlay">
+    <div class="backdrop" onclick="closeVoiceCommandSheet()"></div>
+    <div class="sheet-card">
+        <div class="voice-sheet-title">选择一句试试</div>
+        <div class="voice-sheet-hint">点击任意一条,体验语音触发 → 匹配 Agent → 展示结果</div>
+        <div class="voice-item" onclick="runVoiceDemo('weather')">
+            <div class="vi-ico">🌤️</div>
+            <div><div class="vi-txt">帮我查今天成都天气</div><div class="vi-sub">天气查询</div></div>
+        </div>
+        <div class="voice-item" onclick="runVoiceDemo('news')">
+            <div class="vi-ico">📰</div>
+            <div><div class="vi-txt">播报今天的 AI 新闻</div><div class="vi-sub">资讯播报</div></div>
+        </div>
+        <div class="voice-item" onclick="runVoiceDemo('time')">
+            <div class="vi-ico">🕐</div>
+            <div><div class="vi-txt">现在几点了</div><div class="vi-sub">系统时间</div></div>
+        </div>
+        <div class="voice-item" onclick="runVoiceDemo('train')">
+            <div class="vi-ico">🚄</div>
+            <div><div class="vi-txt">帮我查一下从成都到上海的高铁要多久</div><div class="vi-sub">出行查询</div></div>
+        </div>
+        <div class="voice-item" onclick="runVoiceDemo('record')">
+            <div class="vi-ico">⏺️</div>
+            <div><div class="vi-txt">开始录音</div><div class="vi-sub">进入录音</div></div>
+        </div>
+        <div class="voice-item" onclick="runVoiceDemo('translate')">
+            <div class="vi-ico">🌐</div>
+            <div><div class="vi-txt">开始同声传译</div><div class="vi-sub">进入同传</div></div>
+        </div>
+        <div class="voice-item" onclick="runVoiceDemo('brightness')">
+            <div class="vi-ico">🔆</div>
+            <div><div class="vi-txt">把屏幕亮度调高</div><div class="vi-sub">设备控制</div></div>
+        </div>
+        <div class="voice-item" onclick="runVoiceDemo('ppt')">
+            <div class="vi-ico">📊</div>
+            <div><div class="vi-txt">生成一份会议 PPT</div><div class="vi-sub">内容生成</div></div>
+        </div>
+        <div class="voice-sheet-close" onclick="closeVoiceCommandSheet()">取消</div>
+    </div>
+</div>
+
+<!-- Voice Demo: agent matching process -->
+<div id="voice-agent-overlay" class="voice-overlay">
+    <div class="backdrop"></div>
+    <div class="agent-wrap">
+        <div class="agent-orb">
+            <div class="agent-waves"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="agent-text" id="voice-agent-text">正在识别语音…</div>
+        <div class="agent-agent" id="voice-agent-name"></div>
+    </div>
+</div>
+
+<!-- Voice Demo: result card -->
+<div id="voice-result-overlay" class="voice-overlay">
+    <div class="backdrop" onclick="closeVoiceResultCard()"></div>
+    <div class="result-card" id="voice-result-card" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- Voiceprint: setup modal -->
+<div id="voiceprint-setup-overlay" class="voice-overlay">
+    <div class="vp-backdrop"></div>
+    <div class="vp-modal">
+        <div class="vp-ico">🎙️</div>
+        <div class="vp-title">设置声纹识别</div>
+        <div class="vp-desc">开启后,AI 助手可以通过你的声音识别身份,用于个性化唤醒、指令确认和隐私保护。</div>
+        <div class="vp-hint">录入过程大约需要 30 秒。</div>
+        <div class="vp-btns">
+            <button class="vp-primary" onclick="openVoiceprintEnroll()">开始录入声纹</button>
+            <button class="vp-secondary" onclick="closeVoiceprintSetup(true)">稍后设置</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== Screen: Voiceprint Enroll ==================== -->
+<div id="voiceprint-enroll-screen" class="screen bg-gradient">
+    <div class="ve-back" onclick="skipVoiceprintEnroll()">
+        <span style="font-size:18px;">←</span>稍后设置
+    </div>
+    <div class="voiceprint-enroll-layout">
+        <div class="voiceprint-enroll-visual">
+            <div class="voiceprint-eyes">
+                <div class="voiceprint-eye"></div>
+                <div class="voiceprint-eye"></div>
+            </div>
+        </div>
+        <div class="voiceprint-enroll-card">
+            <div class="voiceprint-step-count" id="voiceprint-step-count">第 1/3 步</div>
+            <div class="voiceprint-title">录入声纹</div>
+            <div class="voiceprint-prompt-label">请朗读以下内容</div>
+            <div class="voiceprint-prompt-text" id="voiceprint-prompt-text"></div>
+            <div class="voiceprint-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="voiceprint-status" id="voiceprint-status">准备录入</div>
+            <button class="voiceprint-primary-btn" id="voiceprint-primary-btn" onclick="nextVoiceprintStep()">开始录入</button>
+            <div class="voiceprint-done-all" id="voiceprint-done-all">声纹录入完成 ✓ 已保存</div>
+        </div>
+    </div>
+</div>
+
 <script>
     // ===== State =====
     let isPaused = false;
@@ -6348,6 +6795,8 @@
 
     function goToHome() {
         showScreen('home-screen');
+        maybeShowVoiceprintSetup();
+        bindQuickPanel();
     }
 
     function goToList() {
@@ -8839,7 +9288,6 @@
         '图文纪要': {
             name: '图文纪要',
             desc: '将录音内容以图文形式整理成结构化纪要，适合快速回顾和分享。',
-            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
             html: '<div class="tpl-detail-section-title">图文纪要的一句话总结记录</div>'
                 + '<table class="tpl-detail-table">'
                 + '<tr><td>纪要主题</td><td>图文纪要主题</td></tr>'
@@ -8853,7 +9301,6 @@
         '会议纪要': {
             name: '会议纪要',
             desc: '完整记录会议内容，自动生成结构化会议纪要，包含议题、结论和待办。',
-            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
             html: '<div class="tpl-detail-section-title">会议纪要的一句话总结记录</div>'
                 + '<table class="tpl-detail-table">'
                 + '<tr><td>会议主题</td><td>会议讨论主题</td></tr>'
@@ -8867,7 +9314,6 @@
         '客户拜访': {
             name: '客户拜访',
             desc: '记录客户拜访过程，整理拜访纪要、合作意向和后续计划。',
-            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>',
             html: '<div class="tpl-detail-section-title">客户拜访活动的一句话总结记录</div>'
                 + '<table class="tpl-detail-table">'
                 + '<tr><td>拜访时间</td><td>客户拜访时间</td></tr>'
@@ -8882,7 +9328,6 @@
         '面试报告': {
             name: '面试报告',
             desc: '完整记录面试过程，包含候选人信息、面试问题、能力评价和录用建议。',
-            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
             html: '<div class="tpl-detail-section-title">面试报告的一句话总结记录</div>'
                 + '<table class="tpl-detail-table">'
                 + '<tr><td>候选人姓名</td><td>面试候选人姓名</td></tr>'
@@ -8898,7 +9343,6 @@
         '学习笔记': {
             name: '学习笔记',
             desc: '记录学习内容，整理知识点摘要、重点概念和复习清单。',
-            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
             html: '<div class="tpl-detail-section-title">学习笔记的一句话总结记录</div>'
                 + '<table class="tpl-detail-table">'
                 + '<tr><td>学习主题</td><td>学习主题内容</td></tr>'
@@ -8917,7 +9361,7 @@
         var tpl = TPL_DETAILS[name];
         if (!tpl) return;
         var body = document.getElementById('tpl-detail-body');
-        body.innerHTML = '<div style="text-align:center;margin-bottom:16px;">' + tpl.icon + '<h3 style="margin:8px 0 4px;font-size:16px;">' + tpl.name + '</h3><p style="font-size:12px;color:#888;">' + tpl.desc + '</p></div>' + tpl.html;
+        body.innerHTML = '<div style="text-align:center;margin-bottom:16px;"><h3 style="margin:8px 0 4px;font-size:16px;">' + tpl.name + '</h3><p style="font-size:12px;color:#888;">' + tpl.desc + '</p></div>' + tpl.html;
         document.getElementById('tpl-detail-overlay').classList.add('open');
     }
 
@@ -9046,7 +9490,7 @@
             return;
         }
         var body = document.getElementById('tpl-select-detail-body');
-        body.innerHTML = '<div style="text-align:center;margin-bottom:16px;">' + tpl.icon + '<h3 style="margin:8px 0 4px;font-size:16px;">' + tpl.name + '</h3><p style="font-size:12px;color:#888;">' + tpl.desc + '</p></div>' + tpl.html;
+        body.innerHTML = '<div style="text-align:center;margin-bottom:16px;"><h3 style="margin:8px 0 4px;font-size:16px;">' + tpl.name + '</h3><p style="font-size:12px;color:#888;">' + tpl.desc + '</p></div>' + tpl.html;
         document.getElementById('tpl-select-detail-overlay').classList.add('open');
     }
 
@@ -9072,6 +9516,272 @@
         t.textContent = msg;
         t.style.display = 'block';
         setTimeout(() => { t.style.display = 'none'; }, 1800);
+    }
+
+    // ===== Voice Demo =====
+    var VOICE_DEMOS = {
+        weather:    { text:'帮我查今天成都天气', agent:'天气助手', steps:['正在识别语音…','正在匹配 Agent…','正在查询天气…'], mode:'card' },
+        news:       { text:'播报今天的 AI 新闻', agent:'资讯播报', steps:['正在识别语音…','正在匹配 Agent…','正在汇总资讯…'], mode:'card' },
+        time:       { text:'现在几点了', agent:'系统助手', steps:['正在识别语音…','正在匹配 Agent…','正在读取时间…'], mode:'card' },
+        train:      { text:'帮我查一下从成都到上海的高铁要多久', agent:'出行助手', steps:['正在识别语音…','正在匹配 Agent…','正在查询车次…'], mode:'card' },
+        record:     { text:'开始录音', agent:'AI 录音', steps:['正在识别语音…','正在匹配 Agent…','准备录音…'], mode:'record' },
+        translate:  { text:'开始同声传译', agent:'同声传译', steps:['正在识别语音…','正在匹配 Agent…','准备同传…'], mode:'translate' },
+        brightness: { text:'把屏幕亮度调高', agent:'设备控制', steps:['正在识别语音…','正在匹配 Agent…','正在调节亮度…'], mode:'toast', toast:'已为你调高屏幕亮度' },
+        ppt:        { text:'生成一份会议 PPT', agent:'内容生成', steps:['正在识别语音…','正在匹配 Agent…','正在生成内容…'], mode:'toast', toast:'已开始生成会议 PPT' }
+    };
+
+    function openVoiceCommandSheet() {
+        document.getElementById('voice-command-sheet').classList.add('show');
+    }
+    function closeVoiceCommandSheet() {
+        document.getElementById('voice-command-sheet').classList.remove('show');
+    }
+
+    function showVoiceAgentProcess(config, callback) {
+        var ov = document.getElementById('voice-agent-overlay');
+        var txt = document.getElementById('voice-agent-text');
+        var nm = document.getElementById('voice-agent-name');
+        txt.textContent = config.steps[0];
+        nm.innerHTML = '';
+        ov.classList.add('show');
+        var i = 0;
+        var stepTimer = setInterval(function () {
+            i++;
+            if (i < config.steps.length) {
+                txt.textContent = config.steps[i];
+                if (i === 1) nm.innerHTML = '匹配到 <span class="badge">' + config.agent + '</span>';
+            } else {
+                clearInterval(stepTimer);
+                nm.innerHTML = '匹配到 <span class="badge">' + config.agent + '</span>';
+                setTimeout(function () {
+                    ov.classList.remove('show');
+                    if (typeof callback === 'function') callback();
+                }, 480);
+            }
+        }, 640);
+    }
+
+    function runVoiceDemo(type) {
+        var config = VOICE_DEMOS[type];
+        if (!config) return;
+        closeVoiceCommandSheet();
+        setTimeout(function () {
+            showVoiceAgentProcess(config, function () {
+                if (config.mode === 'card') {
+                    showVoiceResultCard(type);
+                } else if (config.mode === 'record') {
+                    if (typeof goToRecord === 'function') { goToRecord(); showToast('已进入 AI 录音'); }
+                    else showToast('录音页面暂未就绪');
+                } else if (config.mode === 'translate') {
+                    if (document.getElementById('tr-sim-screen')) { goToScreen('tr-sim-screen'); showToast('已进入同声传译'); }
+                    else showToast('同声传译页面暂未就绪');
+                } else if (config.mode === 'toast') {
+                    showToast(config.toast || '已完成');
+                }
+            });
+        }, 220);
+    }
+
+    function showVoiceResultCard(type) {
+        var card = document.getElementById('voice-result-card');
+        card.innerHTML = buildVoiceResultCard(type);
+        document.getElementById('voice-result-overlay').classList.add('show');
+    }
+    function closeVoiceResultCard() {
+        document.getElementById('voice-result-overlay').classList.remove('show');
+    }
+
+    function buildVoiceResultCard(type) {
+        var close = '<div class="rc-close" onclick="closeVoiceResultCard()">×</div>';
+        if (type === 'weather') {
+            return close +
+                '<div class="rc-weather-city">成都天气</div>' +
+                '<div class="rc-weather-temp">30°C</div>' +
+                '<div class="rc-weather-range">32°C / 24°C · 多云</div>' +
+                '<div class="rc-aqi">空气 <b>优</b> 28</div>' +
+                '<div class="rc-weather-hint">未来两小时不会下雨,放心出门吧 ☂️</div>';
+        }
+        if (type === 'news') {
+            return close +
+                '<div class="rc-news-thumb"><span class="nt-tag">AI 资讯</span></div>' +
+                '<div class="rc-news-title">今日 AI 速览</div>' +
+                '<div class="rc-news-summary">多家厂商发布新一代多模态模型;语音交互与端侧推理持续提速;AI 助手开始深度接入硬件设备。共 5 条,已为你播报摘要。</div>';
+        }
+        if (type === 'time') {
+            var d = new Date();
+            var hh = String(d.getHours()).padStart(2, '0');
+            var mm = String(d.getMinutes()).padStart(2, '0');
+            var week = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
+            var dateStr = (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + week;
+            return close +
+                '<div class="rc-time-big">' + hh + ':' + mm + '</div>' +
+                '<div class="rc-time-date">' + dateStr + '</div>';
+        }
+        if (type === 'train') {
+            return close +
+                '<div class="rc-train-route"><span>成都东</span><span class="arrow">→</span><span>上海虹桥</span></div>' +
+                '<div class="rc-train-dur">约 11 小时</div>' +
+                '<div class="rc-train-sub">最快约 11 小时左右,常见车次约 11~14 小时</div>' +
+                '<div class="rc-train-tip">建议提前查看余票,并确认发车站(成都东)和到达站(上海虹桥)。</div>';
+        }
+        return close + '<div style="color:#ccc">暂无内容</div>';
+    }
+
+    // ===== Voiceprint enroll =====
+    var voiceprintStepIndex = 0;
+    var voiceprintStepStatus = 'idle';
+    var voiceprintTimer = null;
+    var voiceprintPrompts = [
+        '你好,今天的状态很好。',
+        '请帮我完成接下来的任务。',
+        '确认是我本人在发出指令。'
+    ];
+
+    function maybeShowVoiceprintSetup() {
+        if (sessionStorage.getItem('voiceprintSetupShown') === 'true') return;
+        setTimeout(openVoiceprintSetup, 300);
+    }
+
+    function openVoiceprintSetup() {
+        document.getElementById('voiceprint-setup-overlay').classList.add('show');
+    }
+
+    function closeVoiceprintSetup(markShown) {
+        if (markShown) sessionStorage.setItem('voiceprintSetupShown', 'true');
+        document.getElementById('voiceprint-setup-overlay').classList.remove('show');
+    }
+
+    function openVoiceprintEnroll() {
+        closeVoiceprintSetup(false);
+        voiceprintStepIndex = 0;
+        voiceprintStepStatus = 'idle';
+        if (voiceprintTimer) { clearTimeout(voiceprintTimer); voiceprintTimer = null; }
+        showScreen('voiceprint-enroll-screen');
+        renderVoiceprintStep();
+    }
+
+    function renderVoiceprintStep() {
+        var screen = document.getElementById('voiceprint-enroll-screen');
+        var isLast = voiceprintStepIndex >= 2;
+        var promptEl = document.getElementById('voiceprint-prompt-text');
+        var countEl = document.getElementById('voiceprint-step-count');
+        var statusEl = document.getElementById('voiceprint-status');
+        var btn = document.getElementById('voiceprint-primary-btn');
+        var doneAll = document.getElementById('voiceprint-done-all');
+
+        promptEl.textContent = voiceprintPrompts[voiceprintStepIndex] || '';
+        countEl.textContent = '第 ' + (voiceprintStepIndex + 1) + '/3 步';
+        doneAll.style.display = 'none';
+
+        screen.classList.remove('recording', 'done');
+        if (voiceprintStepStatus === 'recording') {
+            screen.classList.add('recording');
+            statusEl.textContent = '正在采集声纹特征...';
+            btn.textContent = '录入中...';
+            btn.disabled = true;
+        } else if (voiceprintStepStatus === 'done') {
+            screen.classList.add('done');
+            statusEl.textContent = '本句录入完成 ✓';
+            if (isLast) {
+                doneAll.style.display = 'block';
+                btn.textContent = '进入首页';
+            } else {
+                btn.textContent = '下一句';
+            }
+            btn.disabled = false;
+        } else {
+            statusEl.textContent = '准备录入';
+            btn.textContent = '开始录入';
+            btn.disabled = false;
+        }
+    }
+
+    function startVoiceprintStep() {
+        if (voiceprintStepStatus === 'recording') return;
+        voiceprintStepStatus = 'recording';
+        renderVoiceprintStep();
+        if (voiceprintTimer) clearTimeout(voiceprintTimer);
+        voiceprintTimer = setTimeout(function () {
+            voiceprintStepStatus = 'done';
+            renderVoiceprintStep();
+        }, 2000);
+    }
+
+    function nextVoiceprintStep() {
+        if (voiceprintStepStatus === 'idle') {
+            startVoiceprintStep();
+            return;
+        }
+        if (voiceprintStepStatus === 'recording') return;
+        if (voiceprintStepStatus === 'done') {
+            if (voiceprintStepIndex < 2) {
+                voiceprintStepIndex++;
+                voiceprintStepStatus = 'idle';
+                renderVoiceprintStep();
+            } else {
+                finishVoiceprintEnroll();
+            }
+        }
+    }
+
+    function finishVoiceprintEnroll() {
+        sessionStorage.setItem('voiceprintSetupShown', 'true');
+        if (voiceprintTimer) { clearTimeout(voiceprintTimer); voiceprintTimer = null; }
+        showScreen('home-screen');
+    }
+
+    function skipVoiceprintEnroll() {
+        sessionStorage.setItem('voiceprintSetupShown', 'true');
+        if (voiceprintTimer) { clearTimeout(voiceprintTimer); voiceprintTimer = null; }
+        showScreen('home-screen');
+    }
+
+    // ===== Home quick panel (right drawer) =====
+    var qpBound = false;
+    function openQuickPanel() {
+        document.getElementById('home-quick-panel').classList.add('open');
+    }
+    function closeQuickPanel() {
+        document.getElementById('home-quick-panel').classList.remove('open');
+    }
+    function navFromPanel(fn) {
+        closeQuickPanel();
+        if (typeof fn === 'function') fn();
+    }
+    function toggleQpSwitch(id) {
+        document.getElementById(id).classList.toggle('on');
+    }
+    function toggleVoiceList() {
+        document.getElementById('qp-voice-list').classList.toggle('open');
+    }
+    function selectVoice(el) {
+        var list = document.getElementById('qp-voice-list');
+        list.querySelectorAll('.qp-voice-item').forEach(function (it) { it.classList.remove('selected'); });
+        el.classList.add('selected');
+        document.getElementById('qp-voice-current').textContent = el.getAttribute('data-name');
+    }
+    // bind home-screen: tap blank opens, tap outside panel closes
+    function bindQuickPanel() {
+        if (qpBound) return;
+        var home = document.getElementById('home-screen');
+        if (!home) return;
+        qpBound = true;
+        home.addEventListener('click', function (e) {
+            var panel = document.getElementById('home-quick-panel');
+            if (!panel) return;
+            var isOpen = panel.classList.contains('open');
+            var insidePanel = e.target.closest && e.target.closest('#home-quick-panel');
+            var onEdgeHint = e.target.closest && e.target.closest('.qp-edge-hint');
+            if (isOpen) {
+                // tap outside panel -> close
+                if (!insidePanel) closeQuickPanel();
+            } else {
+                // tap blank (not on interactive controls) -> open
+                if (onEdgeHint) return;
+                if (e.target.closest && (e.target.closest('button') || e.target.closest('.voice-demo-entry') || e.target.closest('[onclick]'))) return;
+                openQuickPanel();
+            }
+        });
     }
 
     // ===== Ear Detection Toggle =====
